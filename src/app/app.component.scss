@@ -1,0 +1,132 @@
+.iplogin {
+  margin-bottom: 20px;
+}
+$length: 3rem;
+$width: 1rem;
+$depth: 1.4rem;
+$color: #303549;
+
+html {
+  font-size: 10px; // raise this value to scale the star
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: #222;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+.logo {
+  height: 50vh;
+  width: 100vw;
+  background-repeat: no-repeat;
+  background-position: center 0.5rem;
+  background-size: contain;
+}
+
+.star {
+  height: 5rem;
+  width: 5rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateZ(0) translateX(-50%) translateY(-50%);
+}
+
+.point {
+  position: absolute;
+  height: 0.1rem;
+  width: 0.1rem;
+  top: 0;
+  left: 50%;
+  top: 50%;
+  transform-origin: bottom center;
+  animation: pulseFade 1s infinite;
+}
+
+.point:before,
+.point:after {
+  display: block;
+  content: "";
+  width: 0;
+  height: 0;
+  bottom: 0.1rem;
+  border-style: solid;
+  position: absolute;
+}
+
+.point:before {
+  border-width: $length 0 $depth $width;
+  border-color: transparent transparent transparent $color;
+  left: 0.035rem;
+}
+
+.point:after {
+  border-width: $length $width $depth 0;
+  border-color: transparent $color transparent transparent;
+  left: calc(-#{$width} + 0.035rem);
+}
+
+.point:nth-child(1) {
+  transform: translateZ(0);
+  animation-delay: -1s;
+}
+
+.point:nth-child(2) {
+  transform: translateZ(0) rotate(72deg);
+  animation-delay: -0.8s;
+}
+
+.point:nth-child(3) {
+  transform: translateZ(0) rotate(144deg);
+
+  animation-delay: -0.6s;
+}
+
+.point:nth-child(4) {
+  transform: translateZ(0) rotate(216deg);
+  animation-delay: -0.4s;
+}
+
+.point:nth-child(5) {
+  transform: translateZ(0) rotate(288deg);
+  animation-delay: -0.2s;
+}
+
+@keyframes pulseFade {
+  0% {
+    opacity: 0;
+  }
+
+  2% {
+    opacity: 0.6;
+  }
+
+  4% {
+    opacity: 0.4;
+  }
+
+  6% {
+    opacity: 0.8;
+  }
+
+  8% {
+    opacity: 0.4;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

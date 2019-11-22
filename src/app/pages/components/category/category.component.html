@@ -1,0 +1,282 @@
+<div class="row" *ngIf="listCategory">
+  <div class="col-sm-12">
+    <div class="page-header card">
+      <div class="row align-items-end">
+        <div class="col-lg-11">
+          <div class="page-header-title">
+            <h4 style="margin-bottom: 20px;">Thể loại</h4>
+          </div>
+        </div>
+        <div class="spinner-grow" role="status" *ngIf="loading"></div>
+      </div>
+      <div class="table-responsive" *ngIf="!loading">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Stt</th>
+              <th>Tên thể loại</th>
+              <th>Mô tả</th>
+              <th>
+                <div class="" style="float: right;">
+                  <button (click)="gotoCre()" class="btn btn-primary btn-sm">
+                    <i class="icofont icofont-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemsCategory; let i = index">
+              <th scope="row">
+                {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
+              </th>
+              <td>{{ item.nameTheme }}</td>
+              <td>
+                <span class="limitText">{{ item.description }}</span>
+              </td>
+              <td>
+                <div style="float: right;">
+                  <button
+                    (click)="gotoInfo(item.id)"
+                    style="margin-right: 5px;"
+                    class="btn btn-info btn-sm "
+                    id="button"
+                  >
+                    <i class="icofont icofont-info"></i>
+                  </button>
+                  <button
+                    (click)="gotoEdit(item.id)"
+                    style="margin-right: 5px;"
+                    class="btn btn-success btn-sm "
+                    id="button"
+                  >
+                    <i class="icofont icofont-edit"></i>
+                  </button>
+                  <button
+                    (click)="OnDel(item.id)"
+                    class="btn btn-danger btn-sm "
+                  >
+                    <i class="icofont icofont-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="pagedResult">
+        <app-pagination
+          (pageSizeChange)="pageSizeChange($event)"
+          [defaultPageSize]="pageSize"
+          [pagedResult]="pagedResult"
+          (pagedResultChange)="pagedResultChange($event)"
+        >
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="formCre">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+      </div>
+      <div class="card-block">
+        <div class="card-header">
+          <h4 class="sub-title d-inline">Thêm thể loại</h4>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="OnCreate()">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tên thể loại</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Tên thể loại"
+                formControlName="NameTheme"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Mô tả</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Mô tả"
+                formControlName="Description"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            [disabled]="!form.valid"
+            class="btn btn-primary btn-round float-right"
+          >
+            Thêm
+          </button>
+          <a
+            (click)="backtoListCategory()"
+            class="btn btn-inverse btn-round float-right"
+            id="button"
+            >Hủy</a
+          >
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="formEdit">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+      </div>
+      <div class="card-block">
+        <div class="card-header">
+          <h4 class="sub-title d-inline">Cập nhật thông tin thể loại</h4>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="OnUpdate()">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tên thể loại</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Tên thể loại"
+                formControlName="NameTheme"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Mô tả</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Mô tả"
+                formControlName="Description"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            [disabled]="!form.valid"
+            class="btn btn-success btn-round float-right"
+          >
+            Cập nhật
+          </button>
+          <a
+            (click)="backtoListCategory()"
+            class="btn btn-inverse btn-round float-right"
+            >Hủy</a
+          >
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="listTopic">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-block">
+        <div class="card-header">
+          <h2 class="sub-title d-inline">Thể loại: {{ nameCategory }}</h2>
+          <a
+            (click)="listTopicBack()"
+            style="float: right;"
+            class="btn btn-inverse btn-sm"
+            id="button"
+            ><i class="ti-arrow-left"></i
+          ></a>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên đề tài</th>
+                <th>Mô tả</th>
+                <th>
+                  <div style="float: right;">
+                    <button
+                      [disabled]="!btnAdd"
+                      (click)="OnAddTopic()"
+                      class="btn btn-primary btn-sm float-right"
+                    >
+                      <i class="icofont icofont-plus"></i>
+                    </button>
+                    <!-- <input
+                      placeholder="    Tìm kiếm"
+                      style="height: 34px;"
+                      type="text"
+                      list="lst"
+                      (input)="searchChange($event)"
+                    />
+                    <datalist id="lst">
+                      <option
+                        *ngFor="let s of listSearch"
+                        [value]="s.nameTopic"
+                      >
+                        {{ s.nameTopic }}
+                      </option>
+                    </datalist> -->
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of itemsEdit; let i = index">
+                <th scope="row">
+                  {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
+                </th>
+                <td>{{ item.nameTopic }}</td>
+                <td>{{ item.description }}</td>
+                <td>
+                  <div style="float: right;">
+                    <button
+                      (click)="OnDelTopic(item.id)"
+                      class="btn btn-danger btn-sm "
+                    >
+                      <i class="icofont icofont-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="pagedResult">
+          <app-pagination
+            (pageSizeChange)="pageSizeChange($event)"
+            [defaultPageSize]="pageSize"
+            [pagedResult]="pagedResult"
+            (pagedResultChange)="pagedResultChange($event)"
+          >
+          </app-pagination>
+        </div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status" *ngIf="loading">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

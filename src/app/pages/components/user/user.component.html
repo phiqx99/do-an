@@ -1,0 +1,401 @@
+<div class="row" *ngIf="!list">
+  <div class="col-sm-12">
+    <div class="page-header card">
+      <div class="row align-items-end">
+        <div class="col-lg-11">
+          <div class="page-header-title">
+            <h4 style="margin-bottom: 20px;">Danh sách người dùng</h4>
+          </div>
+        </div>
+        <div class="spinner-grow" role="status" *ngIf="loading"></div>
+      </div>
+      <div class="table-responsive" *ngIf="!loading">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Tài khoản</th>
+              <th>Tên đầy đủ</th>
+              <th>Giới tính</th>
+              <th>Ngày sinh</th>
+              <th>Số điện thoại</th>
+              <th>Email</th>
+              <th>
+                <button
+                  (click)="gotoCre()"
+                  class="btn btn-primary btn-sm float-right"
+                >
+                  <i class="icofont icofont-plus"></i>
+                </button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index">
+              <th scope="row">
+                {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
+              </th>
+              <td>{{ item.username }}</td>
+              <td>{{ item.fullName }}</td>
+              <td *ngIf="item.gender === true">Nam</td>
+              <td *ngIf="item.gender === false">Nữ</td>
+              <td>{{ item.dateOfBirth | date }}</td>
+              <td>{{ item.phone }}</td>
+              <td>{{ item.email }}</td>
+              <td>
+                <button
+                  (click)="gotoDel(item.id)"
+                  class="btn btn-danger btn-sm float-right"
+                >
+                  <i class="icofont icofont-trash"></i>
+                </button>
+                <button
+                  (click)="gotoEdit(item.id)"
+                  style="margin-right: 5px;"
+                  class="btn btn-success btn-sm float-right"
+                  id="button"
+                >
+                  <i class="icofont icofont-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="pagedResult">
+        <app-pagination
+          (pageSizeChange)="pageSizeChange($event)"
+          [defaultPageSize]="pageSize"
+          [pagedResult]="pagedResult"
+          (pagedResultChange)="pagedResultChange($event)"
+        >
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-body" *ngIf="formCre">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-right">
+            <i class="icofont icofont-spinner-alt-5"></i>
+          </div>
+          <div class="card-header-right">
+            <i class="icofont icofont-spinner-alt-5"></i>
+          </div>
+        </div>
+        <div class="card-block">
+          <div class="card-header">
+            <h4 class="sub-title d-inline">Thêm mới người dùng</h4>
+          </div>
+          <form [formGroup]="userForm" (ngSubmit)="OnSubmit()">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Tài khoản</label>
+              <div class="col-sm-10">
+                <input
+                  (blur)="checkUsername($event)"
+                  type="text"
+                  class="form-control"
+                  placeholder="Tài khoản"
+                  formControlName="UserName"
+                  required
+                />
+                <span *ngIf="userErr" class="messages" style="color: #FC6180;"
+                  >Tài khoản này đã được sử dụng</span
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Mật khẩu</label>
+              <div class="col-sm-10">
+                <input
+                  type="password"
+                  name="Password"
+                  class="form-control"
+                  placeholder="Mật khẩu"
+                  formControlName="Password"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Tên đầy đủ</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  name="FullName"
+                  class="form-control"
+                  placeholder="Tên đầy đủ"
+                  formControlName="FullName"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Giới tính</label>
+              <div class="col-sm-10">
+                <div class="form-check form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      formControlName="Gender"
+                      class="form-check-input"
+                      type="radio"
+                      name="Gender"
+                      id="gender-1"
+                      value="true"
+                    />
+                    Nam
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      formControlName="Gender"
+                      class="form-check-input"
+                      type="radio"
+                      name="Gender"
+                      id="gender-2"
+                      value="false"
+                    />
+                    Nữ
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Ngày sinh</label>
+              <div class="col-sm-10">
+                <input
+                  type="date"
+                  name="DateOfBirth"
+                  class="form-control"
+                  placeholder="Ngày sinh"
+                  formControlName="DateOfBirth"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Số điện thoại</label>
+              <div class="col-sm-10">
+                <input
+                  (blur)="checkPhone($event)"
+                  type="text"
+                  name="Phone"
+                  class="form-control"
+                  placeholder="Số điện thoại"
+                  formControlName="Phone"
+                  required
+                />
+                <span *ngIf="phoneErr" class="messages" style="color: #FC6180;"
+                  >Số điện thoại này đã được sử dụng</span
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Email</label>
+              <div class="col-sm-10">
+                <input
+                  (blur)="checkEmail($event)"
+                  type="text"
+                  name="Email"
+                  class="form-control"
+                  placeholder="Email"
+                  formControlName="Email"
+                  required
+                />
+                <span *ngIf="emailErr" class="messages" style="color: #FC6180;"
+                  >Email này đã được sử dụng</span
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Địa chỉ</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  name="Address"
+                  class="form-control"
+                  placeholder="Địa chỉ"
+                  formControlName="Address"
+                  required
+                />
+              </div>
+            </div>
+            <button
+              style="margin-left: 10px;"
+              [disabled]="!userForm.valid || userErr || phoneErr || emailErr"
+              type="submit"
+              class="btn btn-primary btn-round float-right"
+            >
+              Xác nhận
+            </button>
+            <a (click)="back()" class="btn btn-inverse btn-round float-right"
+              >Hủy</a
+            >
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-body" *ngIf="formUp">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-block">
+          <div class="card-header">
+            <h4 class="sub-title">Cập nhật người dùng</h4>
+          </div>
+          <form [formGroup]="userForm" (ngSubmit)="OnUpdate()">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Tài khoản</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  name="UserName"
+                  class="form-control"
+                  formControlName="UserName"
+                  placeholder="You can't change me"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Mật khẩu</label>
+              <div class="col-sm-10">
+                <input
+                  type="password"
+                  name="Password"
+                  class="form-control"
+                  placeholder="Password"
+                  formControlName="Password"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Tên đầy đủ</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  name="FullName"
+                  class="form-control"
+                  placeholder="FullName"
+                  formControlName="FullName"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Giới tính</label>
+              <div class="col-sm-10">
+                <div class="form-check form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      formControlName="Gender"
+                      class="form-check-input"
+                      type="radio"
+                      name="Gender"
+                      id="gender-1"
+                      value="true"
+                    />
+                    Nam
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <label class="form-check-label">
+                    <input
+                      formControlName="Gender"
+                      class="form-check-input"
+                      type="radio"
+                      name="Gender"
+                      id="gender-2"
+                      value="false"
+                    />
+                    Nữ
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Ngày sinh</label>
+              <div class="col-sm-10">
+                <input
+                  type="datetime-local"
+                  name="DateOfBirth"
+                  class="form-control"
+                  placeholder="DateOfBirth"
+                  formControlName="DateOfBirth"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Số điện thoại</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Phone"
+                  formControlName="Phone"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Email</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  name="Email"
+                  class="form-control"
+                  placeholder="Email"
+                  formControlName="Email"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Địa chỉ</label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  name="Address"
+                  class="form-control"
+                  placeholder="Address"
+                  formControlName="Address"
+                  required
+                />
+              </div>
+            </div>
+            <button
+              class="btn btn-primary"
+              type="submit"
+              [disabled]="!userForm.valid"
+              class="btn btn-success btn-round float-right"
+            >
+              <span
+                class="spinner-grow spinner-grow-sm"
+                role="status"
+                aria-hidden="true"
+                *ngIf="loading"
+              ></span>
+              Cập nhật
+            </button>
+            <a
+              (click)="back()"
+              class="btn btn-inverse btn-round float-right"
+              id="button"
+              >Hủy</a
+            >
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

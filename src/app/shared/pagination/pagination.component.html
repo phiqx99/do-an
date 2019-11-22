@@ -1,0 +1,45 @@
+<div *ngIf="hidden">
+<div *ngIf="pagedResult" class="d-flex flex-row justify-content-between">
+
+    <div *ngIf="pagedResult" class="d-flex">
+        <select class="form-control mr-2 w4rem p0" (change)="onItemsPerPageChange($event.target.value)">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+        <label style="margin-top: 5px;" class="l-h">Item</label>
+    </div>
+
+    <nav *ngIf="pagedResult">
+        <ul class="pagination justify-content-end mb-0" *ngIf = "hide">
+            <li class="page-item page-btn" [class.disabled]="pagedResult.pageNo == 1">
+                <a class="page-link" (click)="getPage(pagedResult.pageNo - 1)" style="cursor: pointer;">
+                    Trước
+                </a>
+            </li>
+            <li class="page-item page-btn" *ngFor="let page of pages" [class.disabled]="pagedResult.pageNo == page.value">
+                <a class="page-link" (click)="getPage(page.value)"
+                    [class.current]="pagedResult.pageNo == page.value" [class.notActive]="pagedResult.pageNo != page.value">{{page.value}}</a>
+            </li>
+            <li class="page-item page-btn" [class.disabled]="(pagedResult.pageNo) == pagedResult.pageNumber || !pagedResult.pageNumber">
+                <a class="page-link" (click)="getPage(pagedResult.pageNo + 1)" style="cursor: pointer;">
+                    Sau
+                </a>
+            </li>
+        </ul>
+        <ul class="pagination justify-content-end mb-0" *ngIf = "!hide">
+            <li class="page-item page-btn" [class.disabled]="pagedResult.pageNo == 1">
+                <a class="page-link" (click)="getPage(pagedResult.pageNo - 1)">
+                    prev
+                </a>
+            </li>
+            <li class="page-item page-btn" [class.disabled]="(pagedResult.pageNo) == pagedResult.pageNumber">
+                <a (click)="getPage(pagedResult.pageNo + 1)" class="page-link">
+                    next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</div>

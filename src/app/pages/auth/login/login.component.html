@@ -1,0 +1,84 @@
+<div class="theme-loader" *ngIf="loading">
+  <div class="star">
+    <div class="point"></div>
+    <div class="point"></div>
+    <div class="point"></div>
+    <div class="point"></div>
+    <div class="point"></div>
+  </div>
+</div>
+<section class="login p-fixed d-flex text-center bg-primary common-img-bg">
+  <div class="auth-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="login-card card-body auth-body">
+          <form
+            [formGroup]="loginForm"
+            (ngSubmit)="OnSubmit()"
+            class="md-float-material"
+          >
+            <div class="auth-box">
+              <div class="row m-b-20">
+                <div class="col-md-12">
+                  <h3 class="text-left txt-primary">Đăng nhập</h3>
+                </div>
+              </div>
+              <hr />
+              <div class="input-group iplogin">
+                <input
+                  class="form-control"
+                  formControlName="UserName"
+                  placeholder="Tài khoản"
+                  required
+                />
+                <span class="md-line"></span>
+              </div>
+              <div class="input-group">
+                <input
+                  type="password"
+                  class="form-control"
+                  formControlName="Password"
+                  placeholder="Mật khẩu"
+                  required
+                />
+                <span class="md-line"></span>
+              </div>
+              <div class="row m-t-30">
+                <div class="col-md-12">
+                  <button
+                    [disabled]="!loginForm.valid"
+                    type="submit"
+                    class="btn btn-primary btn-md btn-block waves-effect text-center m-b-20"
+                  >
+                    Đăng nhập
+                  </button>
+                  <button
+                    (click)="login_keycloak()"
+                    class="btn btn-primary btn-md btn-block waves-effect text-center m-b-20"
+                  >
+                    Đăng nhập bằng KeyCloak
+                  </button>
+                </div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-md-10">
+                  <p class="text-inverse text-left m-b-0">
+                    Quản lý đề tài nghiên cứu khoa học
+                  </p>
+                  <p class="text-inverse text-left"><b>Đại học Đà Nẵng</b></p>
+                </div>
+                <div class="col-md-2">
+                  <img
+                    src="assets/images/auth/Logo-small-bottom.png"
+                    alt="small-logo.png"
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

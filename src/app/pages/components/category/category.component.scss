@@ -1,0 +1,19 @@
+.btn-round {
+  color: aliceblue !important;
+}
+.btn {
+  color: aliceblue !important;
+}
+input {
+  -webkit-appearance: none;
+}
+input {
+  -webkit-appearance: button;
+}
+.limitText {
+  display: block;
+  width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
