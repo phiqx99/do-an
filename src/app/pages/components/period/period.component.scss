@@ -1,12 +1,15 @@
 .btn-round {
-    color: aliceblue !important;
+  color: aliceblue !important;
 }
 .btn {
-    color: aliceblue !important;
-}
-input{
-    -webkit-appearance: none;
+  color: aliceblue !important;
 }
 input {
-    -webkit-appearance: button;
+  -webkit-appearance: none;
+}
+input {
+  -webkit-appearance: button;
+}
+#button {
+  margin-right: 5px;
 }

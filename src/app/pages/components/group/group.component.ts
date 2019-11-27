@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { GroupService } from "../../../shared/service/group.service";
-import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
@@ -14,37 +13,34 @@ import { UserService } from "../../../shared/service/userservice.service";
   styleUrls: ["./group.component.scss"]
 })
 export class GroupComponent implements OnInit {
-  listU: [];
+  listSearch: [];
   idSelect: any;
-  filterName: any;
-  nameSearch: any;
+  valueSearch: any;
 
   pageSize = 10;
   skip = 0;
   page = 1;
   gridView: GridDataResult;
   pagedResult: PagedResult<any>;
-  loading = false;
 
   groupForm: FormGroup;
-  _id: "";
 
-  UserId: "";
-  GroupId: "";
+  UserId: number;
+  GroupId: number;
 
-  items: any[];
-  itemsE: any[];
-  itemsA: any[];
+  itemsGroup: any[];
+  itemsUser: any[];
   value: any;
-  nameG: any;
+  nameGroup: any;
   idG: any;
   temp: any;
 
   formCre = false;
   formEdit = false;
-  list = true;
-  nameGroup = false;
+  listGroup = true;
+  listUser = false;
   btnAdd = false;
+  loading = false;
 
   constructor(
     private userService: UserService,
@@ -55,6 +51,8 @@ export class GroupComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log(localStorage.getItem("userToken"));
+
     this.groupForm = this.fb.group({
       NameGroup: ["", Validators.required],
       Description: [""]
@@ -62,13 +60,13 @@ export class GroupComponent implements OnInit {
     this.loading = true;
     this.getdataGroup(this.page, this.pageSize);
   }
-  searchChange(e) {
-    this.nameSearch = e.target.value;
-    if (this.nameSearch !== "") {
+  searchChange(value: any) {
+    this.valueSearch = value.target.value;
+    if (this.valueSearch !== "") {
       this.btnAdd = true;
-      this.userService.search(this.nameSearch).subscribe((res: any) => {
-        this.listU = res.data;
-        if (this.listU.length > 0) {
+      this.userService.search(this.valueSearch).subscribe((res: any) => {
+        this.listSearch = res.data;
+        if (this.listSearch.length > 0) {
           this.idSelect = res.data[0].id;
         } else {
           this.idSelect = null;
@@ -78,21 +76,21 @@ export class GroupComponent implements OnInit {
       this.btnAdd = false;
     }
   }
-  getdataGroup(page, pageSize) {
+  getdataGroup(page: number, pageSize: number) {
     this.groupService.getall(page, pageSize).subscribe((data: any) => {
       console.log(data);
-      this.items = data.data.items;
+      this.itemsGroup = data.data.items;
       this.pagedResult = data.data;
       this.pagedResult.pageNumber = data.data.total;
       this.reloadData();
       this.loading = false;
     });
   }
-  getdataGroupUser(id) {
-    this.groupService.getallbyid(id).subscribe((data: any) => {
+  getdataGroupUser(id: number, page: number, pageSize: number) {
+    this.groupService.getallbyid(id, page, pageSize).subscribe((data: any) => {
       console.log(data);
 
-      this.itemsE = data.data.items;
+      this.itemsUser = data.data.items;
       this.pagedResult = data.data;
       this.pagedResult.pageNumber = data.data.total;
       this.reloadData();
@@ -104,7 +102,7 @@ export class GroupComponent implements OnInit {
       total: this.pagedResult.total
     };
   }
-  pagedResultChange(data) {
+  pagedResultChange(data: any) {
     this.pagedResult = data;
     this.getdataGroup(data.pageNo, data.pageSize);
     this.pageSize = data.pageSize;
@@ -119,7 +117,12 @@ export class GroupComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
   }
-  OnSubmit() {
+  gotoCre() {
+    this.groupForm.reset();
+    this.listGroup = false;
+    this.formCre = true;
+  }
+  OnCreate() {
     this.loading = true;
     this.groupService.create(this.groupForm.value).subscribe((data: any) => {
       if (data.errorCode !== 0) {
@@ -131,13 +134,28 @@ export class GroupComponent implements OnInit {
 
         this.loading = false;
         this.formCre = false;
-        this.list = true;
+        this.listGroup = true;
       }
     });
   }
+  gotoEdit(id: number) {
+    this.loading = true;
+    this.groupService.getbyid(id).subscribe((data: any) => {
+      this.GroupId = data.data.id;
+      this.groupForm.setValue({
+        NameGroup: data.data.nameGroup,
+        Description: data.data.description
+      });
+      this.value = data.data;
+      this.loading = false;
+    });
+    this.listGroup = false;
+    this.formCre = false;
+    this.formEdit = true;
+  }
   OnUpdate() {
     this.loading = true;
-    this.groupService.edit(this._id, this.groupForm.value).subscribe(
+    this.groupService.edit(this.GroupId, this.groupForm.value).subscribe(
       () => {},
       error => {
         this.loading = false;
@@ -148,57 +166,13 @@ export class GroupComponent implements OnInit {
         this.toastrService.success("Cập nhật nhóm thành công", "Thành công");
         this.getdataGroup(this.page, this.pageSize);
         this.formCre = false;
-        this.list = true;
-        this.nameGroup = false;
+        this.listGroup = true;
+        this.listUser = false;
         this.formEdit = false;
       }
     );
   }
-  addUser() {
-    this.userService.search(this.nameSearch).subscribe((res: any) => {
-      if (res.data.length > 0) {
-        if (res.data[0].username === this.nameSearch) {
-          if (this.idSelect !== null) {
-            this.groupForm.value.GroupId = this.idG;
-            this.groupForm.value.UserId = this.idSelect;
-            this.temp = this.groupForm.value;
-            this.groupuserService.create(this.temp).subscribe((data: any) => {
-              if (data.errorCode === 11) {
-                this.toastrService.error(
-                  "Người dùng đã tồn tại trong nhóm",
-                  "Thất bại"
-                );
-                this.getdataGroupUser(this.idG);
-              } else {
-                this.toastrService.success(
-                  "Thêm người dùng vào nhóm thành công",
-                  "Thành công"
-                );
-                this.getdataGroupUser(this.idG);
-              }
-            });
-            this.filterName = "";
-          }
-        }
-      } else {
-        this.toastrService.error("Không tìm thấy người dùng", "Thất bại");
-      }
-    });
-  }
-  gotoInfo(id) {
-    this.idG = id;
-    this.loading = true;
-    this.groupService.getbyid(id).subscribe((data2: any) => {
-      console.log(data2);
-
-      this.nameG = data2.data.nameGroup;
-      this.getdataGroupUser(id);
-      this.nameGroup = true;
-      this.list = false;
-      this.loading = false;
-    });
-  }
-  gotoDelG(id) {
+  OnDelGroup(id: number) {
     if (confirm("Xác nhận xóa !")) {
       this.loading = true;
       this.groupService.delete(id).subscribe((res: any) => {
@@ -211,13 +185,57 @@ export class GroupComponent implements OnInit {
           this.getdataGroup(this.page, this.pageSize);
           this.loading = false;
           this.formCre = false;
-          this.list = true;
-          this.nameGroup = false;
+          this.listGroup = true;
+          this.listUser = false;
         }
       });
     }
   }
-  gotoDelU(id) {
+  gotoInfo(id: number) {
+    this.idG = id;
+    this.loading = true;
+    this.groupService.getbyid(id).subscribe((data2: any) => {
+      console.log(data2);
+
+      this.nameGroup = data2.data.nameGroup;
+      this.getdataGroupUser(id, this.page, this.pageSize);
+      this.listUser = true;
+      this.listGroup = false;
+      this.loading = false;
+    });
+  }
+  OnAddUser() {
+    this.userService.search(this.valueSearch).subscribe((res: any) => {
+      if (res.data.length > 0) {
+        if (res.data[0].username === this.valueSearch) {
+          if (this.idSelect !== null) {
+            this.groupForm.value.GroupId = this.idG;
+            this.groupForm.value.UserId = this.idSelect;
+            this.temp = this.groupForm.value;
+            this.groupuserService.create(this.temp).subscribe((data: any) => {
+              if (data.errorCode === 11) {
+                this.toastrService.error(
+                  "Người dùng đã tồn tại trong nhóm",
+                  "Thất bại"
+                );
+                this.getdataGroupUser(this.idG, this.page, this.pageSize);
+              } else {
+                this.toastrService.success(
+                  "Thêm người dùng vào nhóm thành công",
+                  "Thành công"
+                );
+                this.getdataGroupUser(this.idG, this.page, this.pageSize);
+              }
+            });
+            this.valueSearch = "";
+          }
+        }
+      } else {
+        this.toastrService.error("Không tìm thấy người dùng", "Thất bại");
+      }
+    });
+  }
+  OnDelUser(id: number) {
     if (confirm("Xác nhận xóa !")) {
       this.loading = true;
       this.groupuserService.delete(id).subscribe(
@@ -226,11 +244,11 @@ export class GroupComponent implements OnInit {
             "Xóa người dùng khỏi nhóm thành công",
             "Thành công"
           );
-          this.getdataGroupUser(this.idG);
+          this.getdataGroupUser(this.idG, this.page, this.pageSize);
           this.loading = false;
           this.formCre = false;
-          this.list = false;
-          this.nameGroup = true;
+          this.listGroup = false;
+          this.listUser = true;
         },
         err => {
           this.toastrService.error(
@@ -238,42 +256,22 @@ export class GroupComponent implements OnInit {
             "Thất bại"
           );
           this.loading = false;
-          this.getdataGroupUser(id);
+          this.getdataGroupUser(id, this.page, this.pageSize);
         }
       );
     }
   }
-  gotoCre() {
-    this.groupForm.reset();
-    this.list = false;
-    this.formCre = true;
-  }
-  gotoEdit(id) {
-    this.loading = true;
-    this.groupService.getbyid(id).subscribe((data: any) => {
-      this._id = data.data.id;
-      this.groupForm.setValue({
-        NameGroup: data.data.nameGroup,
-        Description: data.data.description
-      });
-      this.value = data.data;
-      this.loading = false;
-    });
-    this.list = false;
-    this.formCre = false;
-    this.formEdit = true;
-  }
   back() {
     this.loading = false;
     this.formCre = false;
-    this.list = true;
-    this.nameGroup = false;
+    this.listGroup = true;
+    this.listUser = false;
     this.formEdit = false;
   }
-  nameGroupB() {
+  listUserBack() {
     this.getdataGroup(this.page, this.pageSize);
     this.formCre = false;
-    this.list = true;
-    this.nameGroup = false;
+    this.listGroup = true;
+    this.listUser = false;
   }
 }

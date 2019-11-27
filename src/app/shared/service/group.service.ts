@@ -39,8 +39,16 @@ export class GroupService {
   getuserbyid() {
     return this.http.get(this.rootURL + "/api/account/getinfor");
   }
-  getallbyid(id: number) {
-    return this.http.get(this.rootURL + "/api/groupUser/getbygroupid?id=" + id);
+  getallbyid(id: number, page: number, pageSize: number) {
+    return this.http.get(
+      this.rootURL +
+        "/api/groupUser/getbygroupid?id=" +
+        id +
+        "&page=" +
+        page +
+        "&pageSize" +
+        pageSize
+    );
   }
   search(textsearch: string) {
     return this.http.get(

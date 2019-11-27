@@ -20,20 +20,20 @@ export class AppComponent implements OnInit {
     //   window.scrollTo(0, 0);
     // });
     // const loca = window.location.href;
-    // if (localStorage.getItem("userToken")) {
-    //   this.loading = true;
-    //   this.service.getUserProfile().subscribe(
-    //     (data: any) => {
-    //       // if (data.data.length === 0) {
-    //       //   this.router.navigateByUrl("com");
-    //       // }
-    //       this.loading = false;
-    //     },
-    //     () => {
-    //       this.router.navigateByUrl("login");
-    //       this.loading = false;
-    //     }
-    //   );
-    // }
+    if (localStorage.getItem("userToken")) {
+      this.loading = true;
+      this.service.getUserProfile().subscribe(
+        (data: any) => {
+          // if (data.data.length === 0) {
+          //   this.router.navigateByUrl("com");
+          // }
+          this.loading = false;
+        },
+        () => {
+          this.router.navigateByUrl("login");
+          this.loading = false;
+        }
+      );
+    }
   }
 }

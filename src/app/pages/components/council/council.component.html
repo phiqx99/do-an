@@ -38,7 +38,6 @@
                 <div style="float: right;">
                   <button
                     (click)="gotoInfo(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-info btn-sm "
                     id="button"
                   >
@@ -46,7 +45,6 @@
                   </button>
                   <button
                     (click)="gotoEdit(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-success btn-sm "
                     id="button"
                   >
@@ -182,6 +180,7 @@
             Cập nhật
           </button>
           <a
+          id="button"
             (click)="backtoListCouncil()"
             class="btn btn-inverse btn-round float-right"
             >Hủy</a
@@ -222,10 +221,11 @@
                       <i class="icofont icofont-plus"></i>
                     </button>
                     <input
-                      placeholder="    Tìm kiếm"
+                      placeholder="  Tìm kiếm"
                       style="height: 34px;"
                       type="text"
                       list="lstu"
+                      [(ngModel)]="valueSearch"
                       (input)="searchChange($event)"
                     />
                     <datalist id="lstu">

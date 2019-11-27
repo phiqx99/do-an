@@ -30,7 +30,7 @@
               <th scope="row">
                 {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
               </th>
-              <td>{{ item.nameTheme }}</td>
+              <td>{{ item.nameCategory }}</td>
               <td>
                 <span class="limitText">{{ item.description }}</span>
               </td>
@@ -38,7 +38,6 @@
                 <div style="float: right;">
                   <button
                     (click)="gotoInfo(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-info btn-sm "
                     id="button"
                   >
@@ -46,7 +45,6 @@
                   </button>
                   <button
                     (click)="gotoEdit(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-success btn-sm "
                     id="button"
                   >
@@ -100,7 +98,7 @@
                 type="text"
                 class="form-control"
                 placeholder="Tên thể loại"
-                formControlName="NameTheme"
+                formControlName="NameCategory"
                 required
               />
             </div>
@@ -158,7 +156,7 @@
                 type="text"
                 class="form-control"
                 placeholder="Tên thể loại"
-                formControlName="NameTheme"
+                formControlName="NameCategory"
                 readonly
               />
             </div>
@@ -182,6 +180,7 @@
             Cập nhật
           </button>
           <a
+            id="button"
             (click)="backtoListCategory()"
             class="btn btn-inverse btn-round float-right"
             >Hủy</a
@@ -212,8 +211,8 @@
               <tr>
                 <th>STT</th>
                 <th>Tên đề tài</th>
-                <th>Mô tả</th>
-                <th>
+                <th>Người đăng ký</th>
+                <!-- <th>
                   <div style="float: right;">
                     <button
                       [disabled]="!btnAdd"
@@ -222,7 +221,7 @@
                     >
                       <i class="icofont icofont-plus"></i>
                     </button>
-                    <!-- <input
+                    <input
                       placeholder="    Tìm kiếm"
                       style="height: 34px;"
                       type="text"
@@ -236,9 +235,9 @@
                       >
                         {{ s.nameTopic }}
                       </option>
-                    </datalist> -->
+                    </datalist>
                   </div>
-                </th>
+                </th> -->
               </tr>
             </thead>
             <tbody>
@@ -247,8 +246,8 @@
                   {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
                 </th>
                 <td>{{ item.nameTopic }}</td>
-                <td>{{ item.description }}</td>
-                <td>
+                <td>{{ item.fullName }}</td>
+                <!-- <td>
                   <div style="float: right;">
                     <button
                       (click)="OnDelTopic(item.id)"
@@ -257,7 +256,7 @@
                       <i class="icofont icofont-trash"></i>
                     </button>
                   </div>
-                </td>
+                </td> -->
               </tr>
             </tbody>
           </table>

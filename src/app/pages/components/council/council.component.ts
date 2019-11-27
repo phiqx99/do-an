@@ -14,8 +14,8 @@ import { GroupUserService } from "../../../shared/service/group-user.service";
 })
 export class CouncilComponent implements OnInit {
   listSearch: [];
-  idSelect: any;
-  valueSearch: any;
+  idSelect: number;
+  valueSearch: string;
 
   pageSize = 10;
   skip = 0;
@@ -24,12 +24,11 @@ export class CouncilComponent implements OnInit {
   pagedResult: PagedResult<any>;
 
   form: FormGroup;
-  _id: "";
 
   itemsCouncil: any[];
   itemsEdit: any[];
-  nameCouncil: any;
-  idCouncil: any;
+  nameCouncil: string;
+  idCouncil: number;
 
   formCre = false;
   formEdit = false;
@@ -118,7 +117,7 @@ export class CouncilComponent implements OnInit {
   gotoEdit(id: any) {
     this.loading = true;
     this.councilService.getById(id).subscribe((res: any) => {
-      this._id = res.data.id;
+      this.idCouncil = res.data.id;
       this.form.setValue({
         NameCouncil: res.data.nameCouncil,
         Description: res.data.description
@@ -132,13 +131,8 @@ export class CouncilComponent implements OnInit {
   }
   OnUpdate() {
     this.loading = true;
-    this.councilService.edit(this._id, this.form.value).subscribe(
-      (res: any) => {},
-      error => {
-        this.loading = false;
-        this.toastrService.error("Update false.", "False");
-      },
-      () => {
+    this.councilService.edit(this.idCouncil, this.form.value).subscribe(
+      res => {
         this.loading = false;
         this.toastrService.success("Update success.", "Success");
         this.getDataCouncil(this.page, this.pageSize);
@@ -146,6 +140,10 @@ export class CouncilComponent implements OnInit {
         this.listCouncil = true;
         this.listUser = false;
         this.formEdit = false;
+      },
+      error => {
+        this.loading = false;
+        this.toastrService.error("Update false.", "False");
       }
     );
   }
@@ -219,7 +217,7 @@ export class CouncilComponent implements OnInit {
                 this.getDataUser(this.idCouncil);
               }
             });
-            // this.filterName = '';
+            this.valueSearch = "";
           }
         }
       } else {

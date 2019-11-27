@@ -64,7 +64,7 @@ export class SchoolComponent implements OnInit {
       this.loading = false;
     });
   }
-  getDataTopicAll(id: number) {
+  getDataTopic(id: number) {
     this.schoolService.getTopicBySchoolId(id).subscribe((data: any) => {
       console.log(data);
 
@@ -182,7 +182,7 @@ export class SchoolComponent implements OnInit {
     this.schoolService.getById(id).subscribe((data: any) => {
       this.nameSchool = data.data.nameSchool;
     });
-    this.getDataTopicAll(id);
+    this.getDataTopic(id);
     this.listTopic = true;
     this.listSchool = false;
     this.loading = false;
@@ -213,20 +213,20 @@ export class SchoolComponent implements OnInit {
             console.log(temp);
 
             this.schoolService
-              .updateTopicAll(this.idSelect, temp)
+              .updateTopic(this.idSelect, temp)
               .subscribe((data: any) => {
                 if (data.success === false) {
                   this.toastrService.error(
                     "Đề tài đã tồn tại trong giai đoạn này",
                     "Thất bại"
                   );
-                  this.getDataTopicAll(this.idSchool);
+                  this.getDataTopic(this.idSchool);
                 } else {
                   this.toastrService.success(
                     "Thêm đề tài vào " + this.nameSchool + " thành công",
                     "Thành công"
                   );
-                  this.getDataTopicAll(this.idSchool);
+                  this.getDataTopic(this.idSchool);
                 }
               });
           }
@@ -241,13 +241,13 @@ export class SchoolComponent implements OnInit {
       this.loading = true;
       this.form.value.SchoolId = null;
       const temp = this.form.value;
-      this.schoolService.updateTopicAll(id, temp).subscribe(
+      this.schoolService.updateTopic(id, temp).subscribe(
         res => {
           this.toastrService.success(
             "Xóa đề tài khỏi " + this.nameSchool + " thành công",
             "Thành công"
           );
-          this.getDataTopicAll(this.idSchool);
+          this.getDataTopic(this.idSchool);
           this.loading = false;
           this.formCre = false;
           this.listSchool = false;
@@ -259,7 +259,7 @@ export class SchoolComponent implements OnInit {
             "Thất bại"
           );
           this.loading = false;
-          this.getDataTopicAll(this.idSchool);
+          this.getDataTopic(this.idSchool);
         }
       );
     }

@@ -9,36 +9,36 @@ export class CategoryService {
   constructor(private http: HttpClient) {}
 
   create(form: Object) {
-    return this.http.post(this.url + "/api/theme/created", form);
+    return this.http.post(this.url + "/api/category/created", form);
   }
   edit(id: any, form: Object) {
-    return this.http.put(this.url + "/api/theme/update?id=" + id, form);
+    return this.http.put(this.url + "/api/category/update?id=" + id, form);
   }
   delete(id: any) {
-    return this.http.delete(this.url + "/api/theme/delete?id=" + id);
+    return this.http.delete(this.url + "/api/category/delete?id=" + id);
   }
   getAll(page: number, pageSize: number) {
     return this.http.get(
-      this.url + "/api/theme/getall?page=" + page + "&pageSize=" + pageSize
+      this.url + "/api/category/getall?page=" + page + "&pageSize=" + pageSize
     );
   }
   getById(id: number) {
-    return this.http.get(this.url + "/api/theme/getbyid?id=" + id);
+    return this.http.get(this.url + "/api/category/getbyid?id=" + id);
   }
   getTopicByCategoryId(id: number) {
     return this.http.get(
-      this.url + "/api/themeTopic/GetTopicByCateId?id=" + id
+      this.url + "/api/category/GetTopicByCategoryId?id=" + id
     );
   }
-  createThemeTopic(form: Object) {
-    return this.http.post(this.url + "/api/themetopic/created", form);
+  createCategory(form: Object) {
+    return this.http.post(this.url + "/api/category/created", form);
   }
-  deleteThemeTopic(id: any) {
-    return this.http.delete(this.url + "/api/themetopic/delete?id=" + id);
+  deleteCategory(id: any) {
+    return this.http.delete(this.url + "/api/category/delete?id=" + id);
   }
   search(textsearch: string) {
     return this.http.get(
-      this.url + "/api/theme/search?searchstring=" + textsearch
+      this.url + "/api/category/search?searchstring=" + textsearch
     );
   }
 }

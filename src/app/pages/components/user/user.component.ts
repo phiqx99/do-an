@@ -17,20 +17,19 @@ export class UserComponent implements OnInit {
   page = 1;
   gridView: GridDataResult;
   pagedResult: PagedResult<any>;
-  loading = false;
 
   userForm: FormGroup;
-  _id: "";
+  idUser: number;
 
-  items: any;
+  itemsUser: any;
   value: any;
   userErr = false;
   phoneErr = false;
   emailErr = false;
-
   formCre = false;
   formUp = false;
-  list = false;
+  listUser = true;
+  loading = false;
 
   gender: any;
   constructor(
@@ -58,7 +57,7 @@ export class UserComponent implements OnInit {
       if (data.data.model.totalCount === 0) {
         this.toastrService.error("group user empty");
       }
-      this.items = data.data.model.items;
+      this.itemsUser = data.data.model.items;
       this.pagedResult = data.data.model;
       this.pagedResult.pageNumber = data.data.model.total;
       this.loading = false;
@@ -86,7 +85,15 @@ export class UserComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
   }
-  OnSubmit() {
+  gotoCre() {
+    this.userErr = false;
+    this.phoneErr = false;
+    this.emailErr = false;
+    this.userForm.reset();
+    this.listUser = false;
+    this.formCre = true;
+  }
+  OnCreate() {
     this.loading = true;
     this.userService.create(this.userForm.value).subscribe((data: any) => {
       if (data.errorCode !== 0) {
@@ -98,36 +105,14 @@ export class UserComponent implements OnInit {
 
         this.loading = false;
         this.formCre = false;
-        this.list = false;
+        this.listUser = true;
       }
     });
-  }
-  OnUpdate() {
-    this.loading = true;
-    this.userService.edit(this._id, this.userForm.value).subscribe(
-      (data: any) => {
-        console.log(data);
-
-        this.loading = false;
-        this.toastrService.success(
-          "Cập nhật người dùng thành công",
-          "Thành công"
-        );
-        this.getData(this.page, this.pageSize);
-        this.formCre = false;
-        this.list = false;
-        this.formUp = false;
-      },
-      error => {
-        this.loading = false;
-        this.toastrService.error("Cập nhật người dùng thất bại", "Thất bại");
-      }
-    );
   }
   gotoEdit(id: number) {
     this.loading = true;
     this.userService.getById(id).subscribe((data: any) => {
-      this._id = data.data.id;
+      this.idUser = data.data.id;
       // const date = this.datepipe.transform(data.data.dateOfBirth, "dd-MM-yyyy");
       console.log(data.data.gender === true ? "true" : "false");
 
@@ -146,9 +131,31 @@ export class UserComponent implements OnInit {
     });
 
     this.formUp = true;
-    this.list = true;
+    this.listUser = false;
   }
-  gotoDel(id: number) {
+  OnUpdate() {
+    this.loading = true;
+    this.userService.edit(this.idUser, this.userForm.value).subscribe(
+      (data: any) => {
+        console.log(data);
+
+        this.loading = false;
+        this.toastrService.success(
+          "Cập nhật người dùng thành công",
+          "Thành công"
+        );
+        this.getData(this.page, this.pageSize);
+        this.formCre = false;
+        this.listUser = true;
+        this.formUp = false;
+      },
+      error => {
+        this.loading = false;
+        this.toastrService.error("Cập nhật người dùng thất bại", "Thất bại");
+      }
+    );
+  }
+  OnDel(id: number) {
     if (confirm("Xác nhận xóa !")) {
       this.loading = true;
       this.userService.delete(id).subscribe((res: any) => {
@@ -203,21 +210,13 @@ export class UserComponent implements OnInit {
       });
     }
   }
-  gotoCre() {
-    this.userErr = false;
-    this.phoneErr = false;
-    this.emailErr = false;
-    this.userForm.reset();
-    this.list = true;
-    this.formCre = true;
-  }
   back() {
     this.userErr = false;
     this.phoneErr = false;
     this.emailErr = false;
     this.loading = false;
     this.formCre = false;
-    this.list = false;
+    this.listUser = true;
     this.formUp = false;
   }
 }

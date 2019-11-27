@@ -65,7 +65,7 @@ export class TopicComponent implements OnInit {
       CategoryId: ["", Validators.required],
       UserId: ["", Validators.required],
       SchoolId: ["", Validators.required],
-      File: ["", Validators.required],
+      NameFile: ["", Validators.required],
       Description: ["", Validators.required]
     });
     this.getDataTopic(this.page, this.pageSize);
@@ -126,10 +126,12 @@ export class TopicComponent implements OnInit {
     console.log(this.form.value);
     this.topicService.create(this.form.value).subscribe((res: any) => {
       if (res.errorCode !== 0) {
-        this.toastrService.error(res.message, "False");
+        console.log(res);
+
+        this.toastrService.error(res.message, "Thất bại");
         this.loading = false;
       } else {
-        this.toastrService.success("Thêm thể loại thành công.", "Success");
+        this.toastrService.success("Thêm đề tài thành công.", "Thành công");
         this.getDataTopic(this.page, this.pageSize);
 
         this.loading = false;
@@ -145,12 +147,14 @@ export class TopicComponent implements OnInit {
 
       this._id = res.data.id;
       const data = res.data[0];
+      console.log(data.nameFile);
+
       this.form.setValue({
         NameTopic: data.nameTopic,
-        CategoryId: data.nameTheme,
+        CategoryId: data.nameCategory,
         UserId: data.nameUser,
         SchoolId: data.nameSchool,
-        File: data.nameFile,
+        NameFile: data.nameFile,
         Description: data.description
       });
       this.loading = false;
@@ -168,11 +172,11 @@ export class TopicComponent implements OnInit {
       (res: any) => {},
       error => {
         this.loading = false;
-        this.toastrService.error("Update false.", "False");
+        this.toastrService.error("Cập nhật đề tài thất bại", "Thất bại");
       },
       () => {
         this.loading = false;
-        this.toastrService.success("Update success.", "Success");
+        this.toastrService.success("Cập nhật đề tài thành công", "Thành công");
         this.getDataTopic(this.page, this.pageSize);
         this.formCre = false;
         this.listTopic = true;
@@ -313,6 +317,7 @@ export class TopicComponent implements OnInit {
                   this.getDataCouncilAll(this.idTopic);
                 }
               });
+            this.valueSearch = "";
           }
         }
       } else {

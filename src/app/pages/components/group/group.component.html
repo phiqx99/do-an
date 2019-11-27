@@ -1,4 +1,4 @@
-<div class="row" *ngIf="list">
+<div class="row" *ngIf="listGroup">
   <div class="col-sm-12">
     <div class="page-header card">
       <div class="row align-items-end">
@@ -26,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of items; let i = index">
+            <tr *ngFor="let item of itemsGroup; let i = index">
               <th scope="row">
                 {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
               </th>
@@ -36,7 +36,6 @@
                 <div class="" style="float: right;">
                   <button
                     (click)="gotoInfo(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-info btn-sm "
                     id="button"
                   >
@@ -44,14 +43,13 @@
                   </button>
                   <button
                     (click)="gotoEdit(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-success btn-sm "
                     id="button"
                   >
                     <i class="icofont icofont-edit"></i>
                   </button>
                   <button
-                    (click)="gotoDelG(item.id)"
+                    (click)="OnDelGroup(item.id)"
                     class="btn btn-danger btn-sm "
                   >
                     <i class="icofont icofont-trash"></i>
@@ -90,7 +88,7 @@
         <div class="card-header">
           <h4 class="sub-title d-inline">Thêm mới nhóm người dùng</h4>
         </div>
-        <form [formGroup]="groupForm" (ngSubmit)="OnSubmit()">
+        <form [formGroup]="groupForm" (ngSubmit)="OnCreate()">
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Tên nhóm</label>
             <div class="col-sm-10">
@@ -115,7 +113,6 @@
             </div>
           </div>
           <button
-            style="margin-left: 10px;"
             type="submit"
             [disabled]="!groupForm.valid"
             class="btn btn-primary btn-round float-right"
@@ -174,14 +171,13 @@
             </div>
           </div>
           <button
-            style="margin-left: 10px;"
             type="submit"
             [disabled]="!groupForm.valid"
             class="btn btn-success btn-round float-right"
           >
             Xác nhận
           </button>
-          <a (click)="back()" class="btn btn-inverse btn-round float-right"
+          <a id="button" (click)="back()" class="btn btn-inverse btn-round float-right"
             >Hủy</a
           >
         </form>
@@ -190,14 +186,14 @@
   </div>
 </div>
 
-<div class="row" *ngIf="nameGroup">
+<div class="row" *ngIf="listUser">
   <div class="col-sm-12">
     <div class="card">
       <div class="card-block">
         <div class="card-header">
-          <h2 class="sub-title d-inline">Tên nhóm: {{ nameG }}</h2>
+          <h2 class="sub-title d-inline">Tên nhóm: {{ nameGroup }}</h2>
           <button
-            (click)="nameGroupB()"
+            (click)="listUserBack()"
             style="float: right;"
             class="btn btn-inverse btn-sm"
             id="button"
@@ -215,7 +211,7 @@
                   <div style="float: right;">
                     <button
                       [disabled]="!btnAdd"
-                      (click)="addUser()"
+                      (click)="OnAddUser()"
                       class="btn btn-primary btn-sm float-right"
                     >
                       <i class="icofont icofont-plus"></i>
@@ -225,10 +221,11 @@
                       style="height: 34px;"
                       type="text"
                       list="lstu"
+                      [(ngModel)]="valueSearch"
                       (input)="searchChange($event)"
                     />
                     <datalist id="lstu">
-                      <option *ngFor="let l of listU" [value]="l.username"
+                      <option *ngFor="let l of listSearch" [value]="l.username"
                         >{{ l.username }}
                       </option>
                     </datalist>
@@ -237,7 +234,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of itemsE; let i = index">
+              <tr *ngFor="let item of itemsUser; let i = index">
                 <th scope="row">
                   {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
                 </th>
@@ -245,7 +242,7 @@
                 <td>
                   <div style="float: right;">
                     <button
-                      (click)="gotoDelU(item.id)"
+                      (click)="OndelUser(item.id)"
                       class="btn btn-danger btn-sm "
                     >
                       <i class="icofont icofont-trash"></i>

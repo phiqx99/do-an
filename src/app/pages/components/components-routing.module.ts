@@ -16,14 +16,6 @@ const routes: Routes = [
     // data : {permittedRoles: ['admin']}
   },
   {
-    path: "groupuser",
-    loadChildren: () =>
-      import("./../components/group-user/group-user.module").then(
-        m => m.GroupUserModule
-      )
-    // data : {permittedRoles: ['admin']}
-  },
-  {
     path: "role",
     loadChildren: () =>
       import("./../components/role/role.module").then(m => m.RoleModule)

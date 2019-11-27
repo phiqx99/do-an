@@ -47,7 +47,7 @@ export class CategoryComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.form = this.fb.group({
-      NameTheme: ["", Validators.required],
+      NameCategory: ["", Validators.required],
       Description: [""]
     });
     this.getDataCategory(this.page, this.pageSize);
@@ -61,7 +61,7 @@ export class CategoryComponent implements OnInit {
       this.loading = false;
     });
   }
-  getDataTopicAll(id: number) {
+  getDataTopic(id: number) {
     this.categoryService.getTopicByCategoryId(id).subscribe((data: any) => {
       console.log(data);
       this.itemsEdit = data.data.items;
@@ -117,7 +117,7 @@ export class CategoryComponent implements OnInit {
     this.categoryService.getById(id).subscribe((res: any) => {
       this._id = res.data.id;
       this.form.setValue({
-        NameTheme: res.data.nameTheme,
+        NameCategory: res.data.nameCategory,
         Description: res.data.description
       });
       this.loading = false;
@@ -170,9 +170,9 @@ export class CategoryComponent implements OnInit {
     this.loading = true;
     this.idCategory = id;
     this.categoryService.getById(id).subscribe((data: any) => {
-      this.nameCategory = data.data.nameTheme;
+      this.nameCategory = data.data.nameCategory;
     });
-    this.getDataTopicAll(id);
+    this.getDataTopic(id);
     this.listTopic = true;
     this.listCategory = false;
     this.loading = false;
@@ -199,10 +199,10 @@ export class CategoryComponent implements OnInit {
         if (res.data[0].nameTopic === this.valueSearch) {
           if (this.idSelect !== null) {
             this.form.value.TopicId = this.idSelect;
-            this.form.value.ThemeId = this.idCategory;
+            this.form.value.CategoryId = this.idCategory;
             const temp = this.form.value;
             this.categoryService
-              .createThemeTopic(temp)
+              .createCategory(temp)
               .subscribe((data: any) => {
                 console.log(data);
                 if (data.success === false) {
@@ -210,13 +210,13 @@ export class CategoryComponent implements OnInit {
                     "Đề tài đã tồn tại trong thể loại " + this.nameCategory,
                     "Thất bại"
                   );
-                  this.getDataTopicAll(this.idCategory);
+                  this.getDataTopic(this.idCategory);
                 } else {
                   this.toastrService.success(
                     "Đã thêm đề tài vào thể loại " + this.nameCategory,
                     "Thành công"
                   );
-                  this.getDataTopicAll(this.idCategory);
+                  this.getDataTopic(this.idCategory);
                 }
               });
           }
@@ -229,7 +229,7 @@ export class CategoryComponent implements OnInit {
   OnDelTopic(id: number) {
     if (confirm("Xác nhận xóa !")) {
       this.loading = true;
-      this.categoryService.deleteThemeTopic(id).subscribe(
+      this.categoryService.deleteCategory(id).subscribe(
         res => {
           console.log(res);
 
@@ -237,7 +237,7 @@ export class CategoryComponent implements OnInit {
             "Đã xóa đề tài khỏi thể loại " + this.nameCategory,
             "Thành công"
           );
-          this.getDataTopicAll(this.idCategory);
+          this.getDataTopic(this.idCategory);
           this.loading = false;
           this.formCre = false;
           this.listCategory = false;
@@ -246,7 +246,7 @@ export class CategoryComponent implements OnInit {
         err => {
           this.toastrService.error("Xóa đề tài thất bại", "Thất bại");
           this.loading = false;
-          this.getDataTopicAll(this.idCategory);
+          this.getDataTopic(this.idCategory);
         }
       );
     }

@@ -26,14 +26,12 @@ export class SchoolService {
     return this.http.get(this.url + "/api/school/getbyid?id=" + id);
   }
   passTopic(id: number, form: any) {
-    return this.http.put(this.url + "/api/topicall/passTopic?id=" + id, form);
+    return this.http.put(this.url + "/api/topic/passTopic?id=" + id, form);
   }
   getTopicBySchoolId(id: number) {
-    return this.http.get(
-      this.url + "/api/topicall/GetTopicBySchoolId?id=" + id
-    );
+    return this.http.get(this.url + "/api/topic/GetTopicBySchoolId?id=" + id);
   }
-  updateTopicAll(id: number, form: Object) {
-    return this.http.put(this.url + "/api/topicall/update?id=" + id, form);
+  updateTopic(id: number, form: Object) {
+    return this.http.put(this.url + "/api/topic/update?id=" + id, form);
   }
 }

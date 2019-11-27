@@ -38,7 +38,6 @@
                 <div style="float: right;">
                   <button
                     (click)="gotoInfo(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-info btn-sm "
                     id="button"
                   >
@@ -46,7 +45,6 @@
                   </button>
                   <button
                     (click)="gotoEdit(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-success btn-sm "
                     id="button"
                   >
@@ -120,9 +118,9 @@
               <datalist id="lstC">
                 <option
                   *ngFor="let s of listSearchCategory; let i = index"
-                  [value]="s.nameTheme"
+                  [value]="s.nameCategory"
                 >
-                  {{ s.nameTheme }}
+                  {{ s.nameCategory }}
                 </option>
               </datalist>
               <span *ngIf="categoryErr" class="messages" style="color: #FC6180;"
@@ -188,7 +186,7 @@
                 <input
                   type="file"
                   class="form-control"
-                  formControlName="File"
+                  formControlName="NameFile"
                   required
                 />
               </div>
@@ -268,9 +266,9 @@
               <datalist id="lstC">
                 <option
                   *ngFor="let s of listSearchCategory; let i = index"
-                  [value]="s.nameTheme"
+                  [value]="s.nameCategory"
                 >
-                  {{ s.nameTheme }}
+                  {{ s.nameCategory }}
                 </option>
               </datalist>
               <span *ngIf="categoryErr" class="messages" style="color: #FC6180;"
@@ -336,7 +334,7 @@
                 <input
                   type="file"
                   class="form-control"
-                  formControlName="File"
+                  formControlName="NameFile"
                   required
                 />
               </div>
@@ -362,6 +360,7 @@
             Cập nhật
           </button>
           <a
+          id="button"
             (click)="backtoListTopic()"
             class="btn btn-inverse btn-round float-right"
             >Hủy</a
@@ -407,6 +406,7 @@
                       style="height: 34px;"
                       type="text"
                       list="lst"
+                      [(ngModel)]="valueSearch"
                       (input)="searchChange($event)"
                     />
                     <datalist id="lst">

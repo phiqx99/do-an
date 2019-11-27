@@ -16,15 +16,15 @@ export class AuthGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    this.service.getUserProfile().subscribe((data: any) => {
-      if (data.data.length > 0) {
-        return true;
-      } else {
-        this.router.navigate(["login"]);
-        return false;
-      }
-    });
     if (localStorage.getItem("userToken") != null) {
+      // this.service.getUserProfile().subscribe((data: any) => {
+      //   if (data.data.length > 0) {
+      //     return true;
+      //   } else {
+      //     this.router.navigate(["login"]);
+      //     return false;
+      //   }
+      // });
       return true;
     } else {
       this.router.navigate(["login"]);

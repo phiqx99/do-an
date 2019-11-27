@@ -63,7 +63,7 @@ export class PeriodComponent implements OnInit {
       this.loading = false;
     });
   }
-  getDataTopicAll(id: number) {
+  getDataTopic(id: number) {
     this.periodService.getTopicByPeriodId(id).subscribe((data: any) => {
       console.log(data);
 
@@ -180,7 +180,7 @@ export class PeriodComponent implements OnInit {
     this.periodService.getById(id).subscribe((data: any) => {
       this.namePeriod = data.data.caption;
     });
-    this.getDataTopicAll(id);
+    this.getDataTopic(id);
     this.listTopic = true;
     this.listPeriod = false;
     this.loading = false;
@@ -211,22 +211,23 @@ export class PeriodComponent implements OnInit {
             console.log(temp);
 
             this.periodService
-              .updateTopicAll(this.idSelect, temp)
+              .updateTopic(this.idSelect, temp)
               .subscribe((data: any) => {
                 if (data.success === false) {
                   this.toastrService.error(
                     "Đề tài đã tồn tại trong giai đoạn này",
                     "Thất bại"
                   );
-                  this.getDataTopicAll(this.idPeriod);
+                  this.getDataTopic(this.idPeriod);
                 } else {
                   this.toastrService.success(
                     "Thêm đề tài vào " + this.namePeriod + " thành công",
                     "Thành công"
                   );
-                  this.getDataTopicAll(this.idPeriod);
+                  this.getDataTopic(this.idPeriod);
                 }
               });
+              this.valueSearch = "";
           }
         }
       } else {
@@ -239,13 +240,13 @@ export class PeriodComponent implements OnInit {
       this.loading = true;
       this.form.value.PeriodId = null;
       const temp = this.form.value;
-      this.periodService.updateTopicAll(id, temp).subscribe(
+      this.periodService.updateTopic(id, temp).subscribe(
         res => {
           this.toastrService.success(
             "Xóa đề tài khỏi " + this.namePeriod + " thành công",
             "Thành công"
           );
-          this.getDataTopicAll(this.idPeriod);
+          this.getDataTopic(this.idPeriod);
           this.loading = false;
           this.formCre = false;
           this.listPeriod = false;
@@ -257,7 +258,7 @@ export class PeriodComponent implements OnInit {
             "Thất bại"
           );
           this.loading = false;
-          this.getDataTopicAll(this.idPeriod);
+          this.getDataTopic(this.idPeriod);
         }
       );
     }

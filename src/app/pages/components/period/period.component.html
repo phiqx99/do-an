@@ -40,7 +40,6 @@
                 <div style="float: right;">
                   <button
                     (click)="gotoInfo(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-info btn-sm "
                     id="button"
                   >
@@ -48,7 +47,6 @@
                   </button>
                   <button
                     (click)="gotoEdit(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-success btn-sm "
                     id="button"
                   >
@@ -236,6 +234,7 @@
             Cập nhật
           </button>
           <a
+            id="button"
             (click)="backtoListPeriod()"
             class="btn btn-inverse btn-round float-right"
             >Hủy</a
@@ -281,6 +280,7 @@
                       style="height: 34px;"
                       type="text"
                       list="lst"
+                      [(ngModel)]="valueSearch"
                       (input)="searchChange($event)"
                     />
                     <datalist id="lst">
@@ -305,7 +305,7 @@
                 <td>
                   <div style="float: right;">
                     <button
-                      style="margin-right: 5px;"
+                      id="button"
                       (click)="OnPassTopic(item.id)"
                       class="btn btn-warning btn-sm "
                     >

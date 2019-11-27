@@ -1,4 +1,4 @@
-<div class="row" *ngIf="list">
+<div class="row" *ngIf="listRole">
   <div class="col-sm-12">
     <div class="page-header card">
       <div class="row align-items-end">
@@ -26,7 +26,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of items; let i = index">
+            <tr *ngFor="let item of itemsRole; let i = index">
               <th scope="row">
                 {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
               </th>
@@ -36,7 +36,6 @@
                 <div style="float: right;">
                   <button
                     (click)="gotoInfo(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-info btn-sm "
                     id="button"
                   >
@@ -44,14 +43,13 @@
                   </button>
                   <button
                     (click)="gotoEdit(item.id)"
-                    style="margin-right: 5px;"
                     class="btn btn-success btn-sm "
                     id="button"
                   >
                     <i class="icofont icofont-edit"></i>
                   </button>
                   <button
-                    (click)="gotoDel(item.id)"
+                    (click)="OnDelRole(item.id)"
                     class="btn btn-danger btn-sm "
                   >
                     <i class="icofont icofont-trash"></i>
@@ -79,19 +77,11 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="card">
-        <div class="card-header">
-          <div class="card-header-right">
-            <i class="icofont icofont-spinner-alt-5"></i>
-          </div>
-          <div class="card-header-right">
-            <i class="icofont icofont-spinner-alt-5"></i>
-          </div>
-        </div>
         <div class="card-block">
           <div class="card-header">
             <h4 class="sub-title d-inline">Thêm mới vai trò</h4>
           </div>
-          <form [formGroup]="roleForm" (ngSubmit)="OnSubmit()">
+          <form [formGroup]="roleForm" (ngSubmit)="OnCreate()">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Tên vai trò</label>
               <div class="col-sm-10">
@@ -116,7 +106,6 @@
               </div>
             </div>
             <button
-              style="margin-left: 10px;"
               type="submit"
               [disabled]="!roleForm.valid"
               class="btn btn-primary btn-round float-right"
@@ -177,7 +166,6 @@
               </div>
             </div>
             <button
-              style="margin-left: 10px;"
               type="submit"
               [disabled]="!roleForm.valid"
               class="btn btn-success btn-round float-right"
@@ -197,14 +185,14 @@
   </div>
 </div>
 
-<div class="row" *ngIf="nameRole">
+<div class="row" *ngIf="listGroup">
   <div class="col-sm-12">
     <div class="card">
       <div class="card-block">
         <div class="card-header">
-          <h2 class="sub-title d-inline">Tên role: {{ nameR }}</h2>
+          <h2 class="sub-title d-inline">Tên role: {{ nameRole }}</h2>
           <button
-            (click)="nameRoleB()"
+            (click)="listGroupBack()"
             style="float: right;"
             class="btn btn-inverse btn-sm"
             id="button"
@@ -222,7 +210,7 @@
                   <div style="float: right;">
                     <button
                       [disabled]="!btnAdd"
-                      (click)="addUser()"
+                      (click)="OnAddGroup()"
                       class="btn btn-primary btn-sm float-right"
                     >
                       <i class="icofont icofont-plus"></i>
@@ -232,10 +220,11 @@
                       style="height: 34px;"
                       type="text"
                       list="lstu"
+                      [(ngModel)]="valueSearch"
                       (input)="searchChange($event)"
                     />
                     <datalist id="lstu">
-                      <option *ngFor="let l of listG" [value]="l.nameGroup"
+                      <option *ngFor="let l of listSearch" [value]="l.nameGroup"
                         >{{ l.nameGroup }}
                       </option>
                     </datalist>
@@ -244,7 +233,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of itemsInfo; let i = index">
+              <tr *ngFor="let item of itemsGroup; let i = index">
                 <th scope="row">
                   {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
                 </th>
@@ -252,7 +241,7 @@
                 <td>
                   <div style="float: right;">
                     <button
-                      (click)="gotoDelG(item.id)"
+                      (click)="OnDelGroup(item.id)"
                       class="btn btn-danger btn-sm "
                     >
                       <i class="icofont icofont-trash"></i>

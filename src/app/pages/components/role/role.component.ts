@@ -1,16 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { RoleService } from "../../../shared/service/role.service";
-import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
-import {
-  FormControl,
-  FormGroupDirective,
-  FormBuilder,
-  FormGroup,
-  NgForm,
-  Validators
-} from "@angular/forms";
-import { NgxPaginationModule } from "ngx-pagination";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { GridDataResult, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { PagedResult } from "../../../shared/models/page-result";
 import { PermissionService } from "../../../shared/service/permission.service";
@@ -22,33 +13,30 @@ import { GroupService } from "../../../shared/service/group.service";
   styleUrls: ["./role.component.scss"]
 })
 export class RoleComponent implements OnInit {
-  listG: [];
+  listSearch: [];
   idSelect: any;
-  filterName: any;
-  nameSearch: any;
+  valueSearch: any;
 
   pageSize = 10;
   skip = 0;
   page = 1;
   gridView: GridDataResult;
   pagedResult: PagedResult<any>;
-  loading = false;
 
   roleForm: FormGroup;
-  _id: "";
 
-  items: any;
-  value: any;
-  idR: any;
-  nameR: any;
-  itemsInfo: any;
+  itemsRole: any;
+  idRole: any;
+  nameRole: any;
+  itemsGroup: any;
   temp: any;
 
   formCre = false;
   formUp = false;
-  list = true;
-  nameRole = false;
+  listRole = true;
+  listGroup = false;
   btnAdd = false;
+  loading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -66,13 +54,13 @@ export class RoleComponent implements OnInit {
     });
     this.getData(this.page, this.pageSize);
   }
-  searchChange(e: any) {
-    this.nameSearch = e.target.value;
-    if (this.nameSearch !== "") {
+  searchChange(value: any) {
+    this.valueSearch = value.target.value;
+    if (this.valueSearch !== "") {
       this.btnAdd = true;
-      this.groupService.search(this.nameSearch).subscribe((res: any) => {
-        this.listG = res.data;
-        if (this.listG.length > 0) {
+      this.groupService.search(this.valueSearch).subscribe((res: any) => {
+        this.listSearch = res.data;
+        if (this.listSearch.length > 0) {
           this.idSelect = res.data[0].id;
         } else {
           this.idSelect = null;
@@ -87,10 +75,18 @@ export class RoleComponent implements OnInit {
       if (data.data.totalCount === 0) {
         this.toastrService.error("group user empty");
       }
-      this.items = data.data.items;
+      this.itemsRole = data.data.items;
       this.pagedResult = data.data;
       this.pagedResult.pageNumber = data.data.total;
       this.loading = false;
+      this.reloadData();
+    });
+  }
+  getdataPermission(id: number) {
+    this.permissionService.getallbyid(id).subscribe((data: any) => {
+      this.itemsGroup = data.data.items;
+      this.pagedResult = data.data;
+      this.pagedResult.pageNumber = data.data.total;
       this.reloadData();
     });
   }
@@ -115,7 +111,12 @@ export class RoleComponent implements OnInit {
   pageChange(event: PageChangeEvent): void {
     this.skip = event.skip;
   }
-  OnSubmit() {
+  gotoCre() {
+    this.roleForm.reset();
+    this.listRole = false;
+    this.formCre = true;
+  }
+  OnCreate() {
     this.loading = true;
     this.roleService.create(this.roleForm.value).subscribe((data: any) => {
       if (data.errorCode !== 0) {
@@ -127,13 +128,27 @@ export class RoleComponent implements OnInit {
 
         this.loading = false;
         this.formCre = false;
-        this.list = true;
+        this.listRole = true;
       }
     });
   }
+  gotoEdit(id: number) {
+    this.loading = true;
+    this.roleService.getbyid(id).subscribe((data: any) => {
+      this.idRole = data.data.id;
+      this.roleForm.setValue({
+        NameRole: data.data.nameRole,
+        Description: data.data.description
+      });
+      this.loading = false;
+    });
+
+    this.formUp = true;
+    this.listRole = false;
+  }
   OnUpdate() {
     this.loading = true;
-    this.roleService.edit(this._id, this.roleForm.value).subscribe(
+    this.roleService.edit(this.idRole, this.roleForm.value).subscribe(
       () => {},
       error => {
         this.loading = false;
@@ -144,78 +159,12 @@ export class RoleComponent implements OnInit {
         this.toastrService.success("Cập nhật vai trò thành công", "Thành công");
         this.getData(this.page, this.pageSize);
         this.formCre = false;
-        this.list = true;
+        this.listRole = true;
         this.formUp = false;
       }
     );
   }
-  addUser() {
-    this.groupService.search(this.nameSearch).subscribe((res: any) => {
-      if (res.data.length > 0) {
-        if (res.data[0].nameGroup === this.nameSearch) {
-          if (this.idSelect !== null) {
-            this.roleForm.value.RoleId = this.idR;
-            this.roleForm.value.GroupId = this.idSelect;
-            this.temp = this.roleForm.value;
-            console.log(this.temp);
-            this.permissionService.create(this.temp).subscribe((data: any) => {
-              if (data.errorCode === 11) {
-                this.toastrService.error(
-                  "Nhóm đã tồn tại trong vai trò",
-                  "Thất bại"
-                );
-                this.getdataPermission(this.idR);
-              } else {
-                this.toastrService.success(
-                  "Thêm nhóm vào vai trò thành công",
-                  "Thành công"
-                );
-                this.getdataPermission(this.idR);
-              }
-            });
-            this.filterName = "";
-          }
-        }
-      } else {
-        this.toastrService.error("Không tìm thấy nhóm", "Thất bại");
-      }
-    });
-  }
-  gotoInfo(id: number) {
-    this.idR = id;
-    this.loading = true;
-    this.roleService.getbyid(id).subscribe((data2: any) => {
-      this.nameR = data2.data.nameRole;
-      this.getdataPermission(id);
-      this.nameRole = true;
-      this.list = false;
-      this.loading = false;
-    });
-  }
-  getdataPermission(id: number) {
-    this.permissionService.getallbyid(id).subscribe((data: any) => {
-      this.itemsInfo = data.data.items;
-      this.pagedResult = data.data;
-      this.pagedResult.pageNumber = data.data.total;
-      this.reloadData();
-    });
-  }
-  gotoEdit(id: number) {
-    this.loading = true;
-    this.roleService.getbyid(id).subscribe((data: any) => {
-      this._id = data.data.id;
-      this.roleForm.setValue({
-        NameRole: data.data.nameRole,
-        Description: data.data.description
-      });
-      this.value = data.data;
-      this.loading = false;
-    });
-
-    this.formUp = true;
-    this.list = false;
-  }
-  gotoDel(id: number) {
+  OnDelRole(id: number) {
     if (confirm("Xác nhận xóa !")) {
       this.loading = true;
       this.roleService.delete(id).subscribe((res: any) => {
@@ -233,24 +182,67 @@ export class RoleComponent implements OnInit {
       });
     }
   }
-  gotoDelG(id: number) {
+  gotoInfo(id: number) {
+    this.idRole = id;
+    this.loading = true;
+    this.roleService.getbyid(id).subscribe((data2: any) => {
+      this.nameRole = data2.data.nameRole;
+      this.getdataPermission(id);
+      this.listGroup = true;
+      this.listRole = false;
+      this.loading = false;
+    });
+  }
+  OnAddGroup() {
+    this.groupService.search(this.valueSearch).subscribe((res: any) => {
+      if (res.data.length > 0) {
+        if (res.data[0].nameGroup === this.valueSearch) {
+          if (this.idSelect !== null) {
+            this.roleForm.value.RoleId = this.idRole;
+            this.roleForm.value.GroupId = this.idSelect;
+            this.temp = this.roleForm.value;
+            console.log(this.temp);
+            this.permissionService.create(this.temp).subscribe((data: any) => {
+              if (data.errorCode === 11) {
+                this.toastrService.error(
+                  "Nhóm đã tồn tại trong vai trò",
+                  "Thất bại"
+                );
+                this.getdataPermission(this.idRole);
+              } else {
+                this.toastrService.success(
+                  "Thêm nhóm vào vai trò thành công",
+                  "Thành công"
+                );
+                this.getdataPermission(this.idRole);
+              }
+            });
+            this.valueSearch = "";
+          }
+        }
+      } else {
+        this.toastrService.error("Không tìm thấy nhóm", "Thất bại");
+      }
+    });
+  }
+  OnDelGroup(id: number) {
     if (confirm("Xác nhận xóa !")) {
       this.loading = true;
       this.permissionService.delete(id).subscribe(
         res => {
           this.toastrService.success(
-            "Xóa người dùng khỏi nhóm thành công",
+            "Xóa nhóm khỏi vai trò thành công",
             "Thành công"
           );
-          this.getdataPermission(this.idR);
+          this.getdataPermission(this.idRole);
           this.loading = false;
           this.formCre = false;
-          this.list = false;
-          this.nameRole = true;
+          this.listRole = false;
+          this.listGroup = true;
         },
         err => {
           this.toastrService.error(
-            "Xóa người dùng khỏi nhóm thất bại",
+            "Xóa nhóm khỏi vai trò thất bại",
             "Thất bại"
           );
           this.loading = false;
@@ -259,21 +251,16 @@ export class RoleComponent implements OnInit {
       );
     }
   }
-  gotoCre() {
-    this.roleForm.reset();
-    this.list = false;
-    this.formCre = true;
-  }
   back() {
     this.loading = false;
     this.formCre = false;
-    this.list = true;
+    this.listRole = true;
     this.formUp = false;
   }
-  nameRoleB() {
+  listGroupBack() {
     this.formCre = false;
     this.formUp = false;
-    this.list = true;
-    this.nameRole = false;
+    this.listRole = true;
+    this.listGroup = false;
   }
 }
