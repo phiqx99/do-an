@@ -1,0 +1,436 @@
+<!-- <div class="row" *ngIf="listPeriod">
+  <div class="col-sm-12">
+    <div class="page-header card">
+      <div class="row align-items-end">
+        <div class="col-lg-11">
+          <div class="page-header-title">
+            <h4 style="margin-bottom: 20px;">Giai đoạn</h4>
+          </div>
+        </div>
+        <div class="spinner-grow" role="status" *ngIf="loading"></div>
+      </div>
+      <div class="table-responsive" *ngIf="!loading">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Stt</th>
+              <th>Giai đoạn</th>
+              <th>Ngày bắt đầu</th>
+              <th>Ngày kết thúc</th>
+              <th>Mô tả</th>
+              <th>
+                <div class="" style="float: right;">
+                  <button (click)="gotoCre()" class="btn btn-primary btn-sm">
+                    <i class="icofont icofont-plus"></i>
+                  </button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of itemsPeriod; let i = index">
+              <th scope="row">
+                {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
+              </th>
+              <td>{{ item.caption }}</td>
+              <td>{{ item.startDay | date }}</td>
+              <td>{{ item.endDay | date }}</td>
+              <td>{{ item.description }}</td>
+              <td>
+                <div style="float: right;">
+                  <button
+                    (click)="gotoInfo(item.id)"
+                    class="btn btn-info btn-sm "
+                    id="button"
+                  >
+                    <i class="icofont icofont-info"></i>
+                  </button>
+                  <button
+                    (click)="gotoEdit(item.id)"
+                    class="btn btn-success btn-sm "
+                    id="button"
+                  >
+                    <i class="icofont icofont-edit"></i>
+                  </button>
+                  <button
+                    (click)="OnDel(item.id)"
+                    class="btn btn-danger btn-sm "
+                  >
+                    <i class="icofont icofont-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="pagedResult">
+        <app-pagination
+          (pageSizeChange)="pageSizeChange($event)"
+          [defaultPageSize]="pageSize"
+          [pagedResult]="pagedResult"
+          (pagedResultChange)="pagedResultChange($event)"
+        >
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="formCre">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+      </div>
+      <div class="card-block">
+        <div class="card-header">
+          <h4 class="sub-title d-inline">Thêm giai đoạn</h4>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="OnCreate()">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tên giai đoạn</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Tên giai đoạn"
+                formControlName="Caption"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Ngày bắt đầu</label>
+            <div class="col-sm-10">
+              <input
+                type="date"
+                name="StartDay"
+                class="form-control"
+                placeholder="Ngày bắt đầu"
+                formControlName="StartDay"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Ngày kết thúc</label>
+            <div class="col-sm-10">
+              <input
+                type="date"
+                name="EndDay"
+                class="form-control"
+                placeholder="Ngày bắt đầu"
+                formControlName="EndDay"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Mô tả</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Mô tả"
+                formControlName="Description"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            [disabled]="!form.valid"
+            class="btn btn-primary btn-round float-right"
+          >
+            Thêm
+          </button>
+          <a
+            (click)="backtoListPeriod()"
+            class="btn btn-inverse btn-round float-right"
+            id="button"
+            >Hủy</a
+          >
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="formEdit">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+        <div class="card-header-right">
+          <i class="icofont icofont-spinner-alt-5"></i>
+        </div>
+      </div>
+      <div class="card-block">
+        <div class="card-header">
+          <h4 class="sub-title d-inline">Cập nhật thông tin giai đoạn</h4>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="OnUpdate()">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Tên giai đoạn</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Tên thể loại"
+                formControlName="Caption"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Ngày bắt đầu</label>
+            <div class="col-sm-10">
+              <input
+                type="datetime-local"
+                name="StartDay"
+                class="form-control"
+                placeholder="Ngày bắt đầu"
+                formControlName="StartDay"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Ngày kết thúc</label>
+            <div class="col-sm-10">
+              <input
+                type="datetime-local"
+                name="EndDay"
+                class="form-control"
+                placeholder="Ngày bắt đầu"
+                formControlName="EndDay"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Mô tả</label>
+            <div class="col-sm-10">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Mô tả"
+                formControlName="Description"
+              />
+            </div>
+          </div>
+          <button
+            type="submit"
+            [disabled]="!form.valid"
+            class="btn btn-success btn-round float-right"
+          >
+            Cập nhật
+          </button>
+          <a
+            id="button"
+            (click)="backtoListPeriod()"
+            class="btn btn-inverse btn-round float-right"
+            >Hủy</a
+          >
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="listTopic">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-block">
+        <div class="card-header">
+          <h2 class="sub-title d-inline">Giai đoạn: {{ namePeriod }}</h2>
+          <a
+            (click)="listTopicBack()"
+            style="float: right;"
+            class="btn btn-inverse btn-sm"
+            id="button"
+            ><i class="ti-arrow-left"></i
+          ></a>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Tên đề tài</th>
+                <th>Người đăng ký</th>
+                <th>
+                  <div style="float: right;">
+                    <button
+                      [disabled]="!btnAdd"
+                      (click)="OnAddTopic()"
+                      class="btn btn-primary btn-sm float-right"
+                    >
+                      <i class="icofont icofont-plus"></i>
+                    </button>
+                    <input
+                      placeholder="    Tìm kiếm"
+                      style="height: 34px;"
+                      type="text"
+                      list="lst"
+                      [(ngModel)]="valueSearch"
+                      (input)="searchChange($event)"
+                    />
+                    <datalist id="lst">
+                      <option
+                        *ngFor="let s of listSearch"
+                        [value]="s.nameTopic"
+                      >
+                        {{ s.nameTopic }}
+                      </option>
+                    </datalist>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of itemsEdit; let i = index">
+                <th scope="row">
+                  {{ (pagedResult.pageNo - 1) * pagedResult.pageSize + i + 1 }}
+                </th>
+                <td>{{ item.nameTopic }}</td>
+                <td>{{ item.nameUser }}</td>
+                <td>
+                  <div style="float: right;">
+                    <button
+                      id="button"
+                      (click)="OnPassTopic(item.id)"
+                      class="btn btn-warning btn-sm "
+                    >
+                      <i class="fa fa-check"></i>
+                    </button>
+                    <button
+                      (click)="OnDelTopic(item.id)"
+                      class="btn btn-danger btn-sm "
+                    >
+                      <i class="icofont icofont-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="pagedResult">
+          <app-pagination
+            (pageSizeChange)="pageSizeChange($event)"
+            [defaultPageSize]="pageSize"
+            [pagedResult]="pagedResult"
+            (pagedResultChange)="pagedResultChange($event)"
+          >
+          </app-pagination>
+        </div>
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status" *ngIf="loading">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div class="container">
+  <div class="timeline" *ngFor="let item of itemsPeriod; let i = index">
+    <div class="timeline-month">
+      {{ item.caption }}
+      <button class="btn btn-success" id="btnEdit">
+        <i class="icofont icofont-edit"></i>
+      </button>
+      <button class="btn btn-danger" id="btnDelete">
+        <i class="icofont icofont-trash"></i>
+      </button>
+    </div>
+    <div class="timeline-section">
+      <div class="timeline-date">
+        {{ item.startDay | date }}
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="timeline-box">
+            <div class="box-title">
+              <i class="fa fa-tasks text-primary" aria-hidden="true"></i> Hội
+              đồng 1
+            </div>
+            <div class="box-content ">
+              <a class="btn btn-sm btn-inverse btn-outline-inverse pull-right"
+                >Details</a
+              >
+              <div class="box-item">
+                <strong>Ngày báo cáo</strong>: 08/22/2018
+              </div>
+              <div class="box-item">
+                <strong>Ngày bắt đầu nhận xét</strong>: 08/22/2018
+              </div>
+              <div class="box-item">
+                <strong>Ngày kết thúc nhận xét</strong>: 08/22/2018
+              </div>
+            </div>
+            <div class="box-footer">Trạng thái</div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="timeline-box">
+            <div class="box-title">
+              <i class="fa fa-pencil text-info" aria-hidden="true"></i> Đề tài 1
+            </div>
+            <div class="box-content">
+              <a class="btn btn-sm btn-inverse btn-outline-inverse pull-right"
+                >Details</a
+              >
+              <div class="box-item"><strong>Người đăng ký</strong>: Marlyn</div>
+              <div class="box-item"><strong>Đơn vị</strong>: Carol</div>
+              <div class="box-item"><strong>Ngày báo cáo</strong>: Carol</div>
+            </div>
+            <div class="box-footer">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="timeline-section">
+      <div class="timeline-date">
+        {{ item.endDay | date }}
+      </div>
+    </div>
+  </div>
+
+  <!--
+  <div class="timeline">
+    <div class="timeline-month">
+      Giai đoạn 3
+      <button class="btn btn-success" id="btnEdit">
+        <i class="icofont icofont-edit"></i>
+      </button>
+      <button class="btn btn-danger" id="btnDelete">
+        <i class="icofont icofont-trash"></i>
+      </button>
+    </div>
+    <div class="timeline-section">
+      <div class="timeline-date">
+        28-11-2019
+      </div>
+    </div>
+    <div class="timeline-section">
+      <button id="btnAdd" class="btn btn-inverse btn-outline-primary btn-icon">
+        <i class="icofont icofont-plus"></i>
+      </button>
+    </div>
+    <div class="timeline-section">
+      <div class="timeline-date">
+        8-12-2019
+      </div>
+    </div>
+  </div> -->
+</div>
