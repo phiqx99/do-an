@@ -14,6 +14,9 @@ import { CategoryService } from "../../../shared/service/category.service";
   styleUrls: ["./topic.component.scss"]
 })
 export class TopicComponent implements OnInit {
+  image: any;
+  nameFile: any;
+  Base64File: any;
   listSearch: [];
   listSearchUser: [];
   listSearchSchool: [];
@@ -65,7 +68,8 @@ export class TopicComponent implements OnInit {
       CategoryId: ["", Validators.required],
       UserId: ["", Validators.required],
       SchoolId: ["", Validators.required],
-      NameFile: ["", Validators.required],
+      NameFile: [""],
+      Base64File: [""],
       Description: ["", Validators.required]
     });
     this.getDataTopic(this.page, this.pageSize);
@@ -116,9 +120,23 @@ export class TopicComponent implements OnInit {
     this.listTopic = false;
     this.formCre = true;
   }
+  changeListener($event): void {
+    this.nameFile = $event.target.value;
+    this.next($event.target);
+  }
+  next(inputValue: any): void {
+    const file: File = inputValue.files[0];
+    const myReader: FileReader = new FileReader();
+    myReader.readAsDataURL(file);
+    myReader.onload = () => {
+      this.Base64File = myReader.result;
+      console.log(this.Base64File);
+    };
+  }
   OnCreate() {
     this.loading = true;
     this.form.patchValue({
+      Base64File: this.Base64File,
       UserId: this.idUserSelect,
       SchoolId: this.idSchoolSelect,
       CategoryId: this.idCategorySelect
@@ -142,14 +160,13 @@ export class TopicComponent implements OnInit {
   }
   gotoEdit(id: number) {
     this.loading = true;
+    this.form.reset();
     this.topicService.getEditById(id).subscribe((res: any) => {
       console.log(res);
-
       this._id = res.data.id;
       const data = res.data[0];
-      console.log(data.nameFile);
-
       this.form.setValue({
+        Base64File: data.base64File,
         NameTopic: data.nameTopic,
         CategoryId: data.nameCategory,
         UserId: data.nameUser,
@@ -157,12 +174,18 @@ export class TopicComponent implements OnInit {
         NameFile: data.nameFile,
         Description: data.description
       });
+      this.Base64File = data.base64File;
+      this.nameFile = data.nameFile;
       this.loading = false;
     });
     this.loading = false;
     this.listTopic = false;
     this.formCre = false;
     this.formEdit = true;
+  }
+  downloadFile() {
+    // window.location.href = this.Base64File;
+    window.location.href = "https://localhost:44346/files/" + this.nameFile;
   }
   OnUpdate() {
     this.loading = true;
@@ -352,7 +375,6 @@ export class TopicComponent implements OnInit {
     }
   }
   backtoListTopic() {
-    this.form.reset();
     this.formCre = false;
     this.listTopic = true;
     this.listCouncil = false;

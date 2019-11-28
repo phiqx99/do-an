@@ -186,6 +186,7 @@
                 <input
                   type="file"
                   class="form-control"
+                  (change)="changeListener($event)"
                   formControlName="NameFile"
                   required
                 />
@@ -330,13 +331,27 @@
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">File</label>
             <div class="col-sm-10">
-              <div class="custom-file">
+              <!-- <div class="custom-file">
+                
+              </div> -->
+              <div class="input-group mb-3">
+                <!-- <input
+                  type="text"
+                  class="form-control"
+                  formControlName="NameFile"
+                  required
+                /> -->
                 <input
-                  type="file"
+                  type="text"
                   class="form-control"
                   formControlName="NameFile"
                   required
                 />
+                <div class="input-group-append">
+                  <a class="btn btn-secondary" type="button" (click)="downloadFile()"
+                    >Tải file</a
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -360,7 +375,7 @@
             Cập nhật
           </button>
           <a
-          id="button"
+            id="button"
             (click)="backtoListTopic()"
             class="btn btn-inverse btn-round float-right"
             >Hủy</a
